@@ -1,0 +1,15 @@
+# 依赖
+node_modules/
+
+# 密钥 / 环境变量（切勿提交真实 Token）
+.env
+.env.*
+*.local
+
+# 操作系统 / 编辑器
+.DS_Store
+Thumbs.db
+.vscode/
+
+# 实时拉取的原始响应（可选，不含敏感信息但体积大）
+data/raw-nutrition.json

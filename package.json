@@ -1,0 +1,16 @@
+{
+  "name": "m-buddy",
+  "version": "1.0.0",
+  "description": "M-buddy 轻食版：面向减脂/健身人群的麦当劳点餐助手（真实使用麦当劳官方 MCP）",
+  "type": "module",
+  "scripts": {
+    "sync": "node scripts/sync-nutrition.mjs",
+    "serve": "node scripts/serve.mjs",
+    "start": "node scripts/serve.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": ["mcdonalds", "nutrition", "fat-loss", "fitness", "mcp", "workbuddy"],
+  "license": "MIT"
+}

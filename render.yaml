@@ -1,0 +1,25 @@
+# Render Blueprint — 一键部署 M-buddy 轻食版
+# 用法：Render Dashboard → New → Blueprint → 连本仓库 → 按提示填 secret 值
+services:
+  - type: web
+    name: m-buddy
+    runtime: node
+    region: singapore
+    plan: free
+    branch: main
+    buildCommand: npm install
+    startCommand: node scripts/serve.mjs
+    healthCheckPath: /
+    envVars:
+      # 麦当劳 MCP Token（必填，填 MCD_MCP_TOKEN）。务必勾选 secret
+      - key: MCD_MCP_TOKEN
+        sync: false
+      # 安全模式：
+      #   ORDER_MODE=full      → 允许下单（配合下面口令使用）
+      #   ORDER_MODE=readonly  → 只读演示，禁止下单/取消/查订单（推荐给公开 Demo）
+      - key: ORDER_MODE
+        value: readonly
+      # 访问口令（可选）。设置后所有接口调用需携带正确口令，前端会自动弹框索取。
+      # 建议：允许陌生人下单时务必设置一个强口令；只读模式可留空。
+      - key: ORDER_ACCESS_CODE
+        sync: false

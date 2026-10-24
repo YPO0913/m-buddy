@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#0fae6e" />
+  <title>M·buddy 轻食版 · 麦当劳减脂点餐</title>
+  <link rel="stylesheet" href="assets/style.css?v=20261024d" />
+</head>
+<body>
+  <header class="appbar">
+    <div class="brand">
+      <span class="logo">M<span class="dot">·</span>buddy</span>
+      <span class="sub">轻食版 · 减脂也能吃麦麦</span>
+    </div>
+    <div class="live-badge" id="liveBadge">快照数据</div>
+  </header>
+
+  <main id="view">
+    <!-- ===== 今日已吃 ===== -->
+    <section class="tab-panel" id="panel-today">
+      <div class="card goal-card">
+        <div class="goal-head">
+          <span>🎯 今日减脂热量目标</span>
+          <span class="goal-val" id="goalVal">1500</span>
+        </div>
+        <div class="goal-row">
+          <div class="seg" id="genderSeg">
+            <button data-g="f" class="active">女性 1500</button>
+            <button data-g="m">男性 1800</button>
+          </div>
+          <input type="number" id="goalInput" class="goal-input" placeholder="自定义 kcal" />
+        </div>
+        <p class="hint">减脂期常用目标：女性 1200–1500，男性 1500–1800 kcal。可自定义。</p>
+      </div>
+
+      <div class="card status-card">
+        <div class="ring-wrap">
+          <div class="ring" id="ring">
+            <div class="ring-num" id="remainNum">–</div>
+            <div class="ring-label">剩余 kcal</div>
+          </div>
+        </div>
+        <div class="status-info">
+          <div class="row"><span>已摄入</span><b id="intakeNum">0</b><span>kcal</span></div>
+          <div class="row"><span>目标</span><b id="targetNum">1500</b><span>kcal</span></div>
+          <div class="verdict" id="verdict">先记下今天吃过什么 👇</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">💬 说说今天吃了什么（自动算热量）</div>
+        <div class="nl-row">
+          <input type="text" id="nlInput" placeholder="例：一碗米饭、两个水煮蛋、4个奥尔良鸡翅" autocomplete="off" />
+          <button id="nlParse">识别</button>
+        </div>
+        <div class="nl-preview hidden" id="nlPreview"></div>
+        <p class="hint">用顿号「、」分隔每样食物，带上数量更准（如「两碗米饭」）。<span class="nl-example" id="nlExample">试试示例 →</span></p>
+      </div>
+
+      <div class="card">
+        <div class="card-title">⚡ 一键记录常吃食物</div>
+        <div class="chips" id="presetChips"></div>
+        <div class="add-row">
+          <input type="text" id="customName" placeholder="识别不到的食物名称" />
+          <input type="number" id="customKcal" placeholder="kcal" />
+          <button id="addCustom">＋</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">📝 今日已吃</div>
+        <ul class="intake-list" id="intakeList"></ul>
+      </div>
+    </section>
+
+    <!-- ===== 菜单 ===== -->
+    <section class="tab-panel hidden" id="panel-menu">
+      <div class="search"><input type="text" id="menuSearch" placeholder="🔍 搜单品 / 标签" /></div>
+      <div class="cat-tabs" id="catTabs"></div>
+      <div class="order-filter" id="orderFilter">
+        <button data-o="0" class="active">全部单品</button>
+        <button data-o="1">仅可下单</button>
+      </div>
+      <div class="menu-grid" id="menuGrid"></div>
+    </section>
+
+    <!-- ===== 推荐 ===== -->
+    <section class="tab-panel hidden" id="panel-rec">
+      <div class="card budget-card">
+        <div class="budget-top">
+          <span>🍽️ 本餐可用预算</span>
+          <span class="budget-num" id="budgetNum">–</span>
+        </div>
+        <p class="hint" id="budgetHint">先到「今日」页记录已吃食物，系统才能算出还能吃多少。</p>
+      </div>
+      <div id="recList"></div>
+    </section>
+
+    <!-- ===== 下单（购物车 + 连接麦当劳） ===== -->
+    <section class="tab-panel hidden" id="panel-cart">
+      <div class="card">
+        <div class="card-title">🛒 已选单品（连接麦当劳下单）</div>
+        <ul class="cart-list" id="cartList"></ul>
+        <div class="cart-empty" id="cartEmpty">还没选单品，去「菜单」或「推荐」页加入 🛒</div>
+        <div class="cart-summary hidden" id="cartSummary"></div>
+      </div>
+
+      <div class="card" id="orderForm">
+        <div class="card-title">📍 取餐方式</div>
+        <div class="seg" id="beTypeSeg">
+          <button data-be="1" class="active">到店自取</button>
+          <button data-be="2">麦乐送</button>
+        </div>
+
+        <div class="store-row" id="storeRow">
+          <div>
+            <div class="store-name" id="storeName">麦当劳广州天源路餐厅</div>
+            <div class="store-code" id="storeCode">门店 1400359</div>
+          </div>
+          <button class="link" id="changeStore">换门店</button>
+        </div>
+        <div class="store-search hidden" id="storeSearch">
+          <div class="store-inputs">
+            <input type="text" id="storeCity" placeholder="城市，如 广州" value="广州" />
+            <input type="text" id="storeKw" placeholder="商圈/地标，如 天河" value="天河" />
+          </div>
+          <button id="storeQuery">查门店</button>
+          <div class="store-list" id="storeList"></div>
+        </div>
+
+        <div class="takeway hidden" id="takeWayRow">
+          <div class="card-title">取餐形式</div>
+          <div class="seg" id="takeWaySeg"></div>
+        </div>
+
+        <div class="addr-row hidden" id="addrRow">
+          <input type="text" id="addrId" placeholder="外送配送地址ID（演示先用「到店自取」）" />
+        </div>
+
+        <button class="primary" id="calcBtn">① 计算价格（含优惠）</button>
+        <div class="price-preview hidden" id="pricePreview"></div>
+        <button class="primary order" id="orderBtn">② 确认下单</button>
+        <p class="order-note">⚠️ 点击「确认下单」将连接麦当劳创建真实订单，完成后请在麦当劳 App / 扫码完成支付。</p>
+        <div class="order-result hidden" id="orderResult"></div>
+        <p class="hint hidden" id="orderBackendHint">下单需本地后端：用 <code>MCD_MCP_TOKEN=你的token npm run serve</code> 启动服务。</p>
+      </div>
+    </section>
+  </main>
+
+  <!-- 二次确认弹窗 -->
+  <div class="modal-mask hidden" id="confirmModal">
+    <div class="modal">
+      <div class="modal-title">⚠️ 确认创建麦当劳订单？</div>
+      <div class="modal-body" id="confirmBody"></div>
+      <div class="modal-actions">
+        <button class="ghost" id="confirmCancel">再想想</button>
+        <button class="primary" id="confirmOk">确认下单</button>
+      </div>
+    </div>
+  </div>
+
+  <nav class="tabbar">
+    <button class="tab active" data-tab="today"><span>🥗</span>今日</button>
+    <button class="tab" data-tab="menu"><span>🍔</span>菜单</button>
+    <button class="tab" data-tab="rec"><span>✨</span>推荐</button>
+    <button class="tab" data-tab="cart"><span>🛒</span>下单</button>
+  </nav>
+
+  <script src="assets/menu-data.js?v=20261024d"></script>
+  <script src="assets/food-db.js?v=20261024d"></script>
+  <script src="assets/app.js?v=20261024d"></script>
+</body>
+</html>
