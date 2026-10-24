@@ -496,12 +496,25 @@
   // ---------- 公网部署模式（只读演示 / 口令保护）----------
   async function loadConfig() {
     try {
-      const r = await fetch("/api/config");
+      const r = await fetch("/api/config", { cache: "no-store" });
+      if (!r.ok) throw new Error("no backend");
       const c = await r.json();
       READONLY = !!c.readonly;
       if (c.needCode) { try { ACCESS_CODE = localStorage.getItem("mbuddy_code") || ""; } catch (e) {} }
       if (READONLY) applyReadonlyUI();
-    } catch (e) { /* 本地运行或旧后端：保持全功能可用 */ }
+    } catch (e) {
+      // 纯静态托管（GitHub Pages）没有后端：明确告知，而不是点下去才报错
+      applyStaticUI();
+    }
+  }
+  function applyStaticUI() {
+    const btn = $("#orderBtn");
+    if (btn) { btn.textContent = "静态演示版 · 不支持下单"; btn.disabled = true; }
+    const hint = $("#orderBackendHint");
+    if (hint) {
+      hint.innerHTML = "📄 <b>当前为 GitHub Pages 静态演示</b>：菜单热量标注、口语记账、四策略套餐推荐 <b>全部可用</b>；真实下单需在本地运行本项目（<code>npm start</code>）后使用。";
+      hint.classList.remove("hidden");
+    }
   }
   function applyReadonlyUI() {
     const btn = $("#orderBtn");
